@@ -63,6 +63,11 @@ def get_mappings(file, org, source, case = 1):
         we are trying to map from a local identifier to a different data source using a pre-defined
         mapping (e.g. we have a local identifier mapped to Ensembl and we want to use BridgeDb to 
         map the local identifier to Entrez)
+    Returns
+    -------
+    result_df : pandas DataFrame
+        DataFrame containing the mappings in an easier to read and modify format 
+    
     
     """
     
