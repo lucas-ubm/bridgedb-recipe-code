@@ -6,8 +6,8 @@ import requests
 import pandas as pd
 
 url = "https://webservice.bridgedb.org/"
-single_request = url+"{org}/xrefs/{source}/{identifier}"
-batch_request = url+"{org}/xrefsBatch/{source}"
+single_request = url+"{org}/xrefs/{source}/{identifier}{}"
+batch_request = url+"{org}/xrefsBatch/{source}{}"
 
 def to_df(response, batch=False):
     """ Using a request object generates a pandas dataframe from the text response.
@@ -40,7 +40,7 @@ def to_df(response, batch=False):
         
     return pd.DataFrame([line.split('\t') for line in response.text.split('\n')])
 
-def get_mappings(file, org, source, case = 1):
+def get_mappings(file, org, source, case = 1, target = ''):
     """ Calculates mappings of identifiers from organism `org` and `source` identifier
     
     This method calculates the mappings of identifiers stored in `file` corresponding to organism
@@ -63,6 +63,10 @@ def get_mappings(file, org, source, case = 1):
         we are trying to map from a local identifier to a different data source using a pre-defined
         mapping (e.g. we have a local identifier mapped to Ensembl and we want to use BridgeDb to 
         map the local identifier to Entrez)
+    target : str, optional
+        Specifies the name of the data source to which we want to map our `source` dataset. If ''
+        all possible mappings will be returned
+        
     Returns
     -------
     result_df : pandas DataFrame
@@ -71,6 +75,9 @@ def get_mappings(file, org, source, case = 1):
     
     """
     
+    if len(target) > 0:
+        target = '?dataSource='+target
+    
     names = ['source']
         
     if case == 2:
@@ -78,7 +85,7 @@ def get_mappings(file, org, source, case = 1):
         
     data = pd.read_csv(file, sep='\t', header=None, names=names)
     
-    response = requests.post(batch_request.format(org=org, source=source), data = data.source.to_csv(index=False, header=False))
+    response = requests.post(batch_request.format(target, org=org, source=source), data = data.source.to_csv(index=False, header=False))
     mapping = to_df(response, batch=True)
     
     if case == 2: 
