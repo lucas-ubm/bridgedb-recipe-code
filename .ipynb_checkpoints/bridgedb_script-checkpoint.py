@@ -34,7 +34,7 @@ def to_df(response, batch=False):
         for tup in to_df(response).itertuples():
             if tup[3] != None:
                 for mappings in tup[3].split(','):
-                    target = mappings.split(':')
+                    target = mappings.split(':', 1)
                     records.append((tup[1], tup[2], target[1], target[0]))
         return pd.DataFrame(records, columns = ['original', 'source', 'mapping', 'target'])
         
