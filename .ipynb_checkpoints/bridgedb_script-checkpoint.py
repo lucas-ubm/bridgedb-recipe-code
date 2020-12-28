@@ -35,7 +35,10 @@ def to_df(response, batch=False):
             if tup[3] != None:
                 for mappings in tup[3].split(','):
                     target = mappings.split(':', 1)
-                    records.append((tup[1], tup[2], target[1], target[0]))
+                    if len(target) > 1:
+                        records.append((tup[1], tup[2], target[1], target[0]))
+                    else:
+                        records.append((tup[1], tup[2], target[0], target[0]))
         return pd.DataFrame(records, columns = ['original', 'source', 'mapping', 'target'])
         
     return pd.DataFrame([line.split('\t') for line in response.text.split('\n')])
